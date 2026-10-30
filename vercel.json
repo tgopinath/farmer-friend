@@ -1,0 +1,6 @@
+{
+  "headers": [
+    { "source": "/(sw.js|index.html|app.js|i18n.js|styles.css|images.js|sources.js|data-crops.js|data-compost.js|data-ta-crops-1.js|data-ta-crops-2.js|data-ta-compost.js)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/manifest.json", "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }] }
+  ]
+}
