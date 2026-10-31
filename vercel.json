@@ -1,6 +1,6 @@
 {
   "headers": [
-    { "source": "/(sw.js|index.html|app.js|i18n.js|styles.css|images.js|sources.js|data-crops.js|data-compost.js|data-ta-crops-1.js|data-ta-crops-2.js|data-ta-compost.js)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/(sw.js|index.html|app.js|i18n.js|styles.css|images.js|sources.js|data-crops.js|data-crops-more-1.js|data-crops-more-2.js|data-crops-more-3.js|data-crops-more-4.js|media.js|media-inputs.js|videos.js|media-more-1.js|media-more-2.js|videos-more.js|images-local.js|captions-ta.js|data-compost.js|data-ta-crops-1.js|data-ta-crops-2.js|data-ta-compost.js)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
     { "source": "/manifest.json", "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }] }
   ]
 }

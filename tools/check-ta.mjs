@@ -1,9 +1,10 @@
 // Checks the Tamil data files match the English data shape: same ids, same fields, same array lengths,
 // and the same numbers in every string (so doses and the calculator stay correct). Run: node tools/check-ta.mjs
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 const root = new URL('..', import.meta.url).pathname;
 const load = f => existsSync(root + f) ? readFileSync(root + f, 'utf8') : '';
-const src = ['data-crops.js', 'data-compost.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js'].map(load).join('\n')
+const more = readdirSync(root).filter(f => /^data-crops-more-\d+\.js$/.test(f)).sort();
+const src = ['images.js', 'data-crops.js', ...more, 'data-compost.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js'].map(load).join('\n')
   .replace(/^const (\w+) =/gm, 'globalThis.$1 =');
 globalThis.window = globalThis;
 new Function(src)();

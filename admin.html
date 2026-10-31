@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FarmerFriend Admin</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { padding-bottom: 0; }
+    .admin { max-width: 980px; margin: 0 auto; padding: 24px 20px 80px; }
+    .admin-top { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .admin-top .spacer { flex: 1; }
+    .login { max-width: 400px; margin: 10vh auto; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .login h1 { font-size: 28px; }
+    .field input, .field select, .field textarea { font: inherit; color: var(--ink); width: 100%; }
+    .field textarea { min-height: 84px; resize: vertical; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
+    .field select { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
+    .field small { color: var(--muted); font-weight: 400; }
+    .form-card { padding: 22px; margin-top: 16px; }
+    .form-card h2 { font-size: 21px; margin-bottom: 4px; }
+    .form-card > p { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 700px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+    .checks { display: flex; flex-wrap: wrap; gap: 8px; }
+    .checks label { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 14px; cursor: pointer; }
+    .checks input { accent-color: var(--green); }
+    .checks label:has(input:checked) { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 600; }
+    .rows { display: flex; flex-direction: column; gap: 8px; }
+    .row2 { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; }
+    .row2 input { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: inherit; color: var(--ink); min-width: 0; }
+    @media (max-width: 600px) { .row2 { grid-template-columns: 1fr auto; } .row2 input:nth-child(2) { grid-column: 1; } }
+    .btn-small { padding: 7px 12px; font-size: 13px; border-radius: 10px; }
+    .btn-danger { background: var(--surface); color: var(--danger); border-color: var(--line); }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .list .mini { cursor: default; }
+    .list .mini .acts { margin-left: auto; display: flex; gap: 6px; }
+    .photo-prev { width: 180px; aspect-ratio: 4 / 3; border-radius: 12px; object-fit: cover; background: var(--surface-2); }
+    .lookup-res { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .lookup-res button { display: flex; align-items: center; gap: 8px; text-align: left; padding: 6px 10px 6px 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 13px; }
+    .lookup-res img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+    .sticky-bar { position: sticky; bottom: 0; margin-top: 20px; padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .msg { font-size: 14px; font-weight: 500; }
+    .msg.err { color: var(--danger); }
+    .msg.ok { color: var(--green); }
+    details.ta-block summary { cursor: pointer; font-weight: 600; }
+    details.ta-block[open] summary { margin-bottom: 12px; }
+    .ta-block textarea, .ta-block input { font-family: var(--tamil); }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12C12 7.5 8.5 5 4 5c0 4.5 3.5 7 8 7Z"/><path d="M12 14c0-4 3-6.5 8-6.5 0 4-3 6.5-8 6.5Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+  </defs></svg>
+
+  <!-- Login -->
+  <form class="card login" id="loginForm" hidden>
+    <span class="brand-mark" style="width:44px;height:44px"><svg><use href="#i-sprout"/></svg></span>
+    <h1>FarmerFriend admin</h1>
+    <p class="muted">Sign in to add or edit plants. New plants appear in the app for everyone.</p>
+    <label class="field"><span>Username</span><input id="user" autocomplete="username" required></label>
+    <label class="field"><span>Password</span><input id="pass" type="password" autocomplete="current-password" required></label>
+    <button class="btn btn-primary" type="submit">Sign in</button>
+    <p class="msg err" id="loginMsg"></p>
+  </form>
+
+  <!-- Admin -->
+  <main class="admin" id="adminMain" hidden>
+    <div class="admin-top">
+      <a class="brand" href="./"><span class="brand-mark"><svg><use href="#i-sprout"/></svg></span><span class="brand-name">FarmerFriend admin</span></a>
+      <span class="spacer"></span>
+      <a class="btn btn-outline btn-small" href="./#/crops" target="_blank">Open the app ↗</a>
+      <button class="btn btn-outline btn-small" id="logout" type="button">Sign out</button>
+    </div>
+
+    <section class="card form-card">
+      <div class="section-head" style="margin:0"><div><h2>Plants you added</h2><p id="countLine">Loading…</p></div>
+        <button class="btn btn-primary btn-small" id="newBtn" type="button">+ Add a plant</button></div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <form id="plantForm" hidden novalidate>
+      <h1 class="page-title" id="formTitle" style="margin-top:28px">Add a plant</h1>
+      <p class="page-lede">Use figures from official guides (TNAU, ICAR, NHB, your KVK) and list them under Sources. Only Name, Category, Season, Sowing months and Introduction are required.</p>
+
+      <section class="card form-card">
+        <h2>Find the plant</h2>
+        <p>Type a name to fill in the scientific name, Tamil name and a photo from iNaturalist (open-licence photos only).</p>
+        <div class="row2" style="grid-template-columns:1fr auto"><input id="lookupQ" placeholder="e.g. Drumstick, Moringa oleifera, முருங்கை"><button class="btn btn-outline btn-small" type="button" id="lookupBtn"><svg style="width:16px;height:16px"><use href="#i-search"/></svg>Look up</button></div>
+        <div class="lookup-res" id="lookupRes"></div>
+      </section>
+
+      <section class="card form-card">
+        <h2>Basics</h2><p>How the plant appears in lists and search.</p>
+        <div class="grid2">
+          <label class="field"><span>Name (English) *</span><input name="name" required placeholder="e.g. Drumstick (Moringa)"></label>
+          <label class="field"><span>Tamil name</span><input name="ta" class="ta" placeholder="e.g. முருங்கை"></label>
+          <label class="field"><span>Scientific name</span><input name="sci" placeholder="e.g. Moringa oleifera"></label>
+          <label class="field"><span>Id <small>(used in the link; letters, numbers, dashes)</small></span><input name="id" pattern="[a-z0-9][a-z0-9-]{1,40}" placeholder="drumstick"></label>
+          <label class="field"><span>Category *</span><select name="cat" id="catSel"></select></label>
+          <label class="field"><span>Water need</span><select name="water"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></label>
+        </div>
+        <div class="field" style="margin-top:14px"><span>Season *</span><div class="checks" id="seasonChecks"></div></div>
+        <div class="field" style="margin-top:14px"><span>Sowing / planting months *</span><div class="checks" id="sowChecks"></div></div>
+        <div class="field" style="margin-top:14px"><span>Harvest months <small>(leave empty for year-round or long crops)</small></span><div class="checks" id="harvestChecks"></div></div>
+        <label class="field" style="margin-top:14px"><span>Introduction *</span><textarea name="intro" placeholder="One or two sentences about the crop"></textarea></label>
+      </section>
+
+      <section class="card form-card">
+        <h2>Growing facts</h2><p>Per acre, as farmers use them.</p>
+        <div class="grid3">
+          <label class="field"><span>Duration</span><input name="days" placeholder="e.g. 90–120 days"></label>
+          <label class="field"><span>Soil pH</span><input name="ph" placeholder="e.g. 6.0 – 7.5"></label>
+          <label class="field"><span>Temperature</span><input name="temp" placeholder="e.g. 25 – 35 °C"></label>
+          <label class="field"><span>Rainfall</span><input name="rain" placeholder="e.g. 600 – 900 mm"></label>
+          <label class="field"><span>Spacing</span><input name="spacing" placeholder="e.g. 45 × 30 cm"></label>
+          <label class="field"><span>Seed rate</span><input name="seed" placeholder="e.g. 2 kg/acre"></label>
+        </div>
+        <div class="grid2" style="margin-top:14px">
+          <label class="field"><span>Soil</span><input name="soil" placeholder="e.g. Well-drained red loam"></label>
+          <label class="field"><span>Expected yield</span><input name="yield" placeholder="e.g. 40 – 50 quintal/acre"></label>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <h2>How to grow</h2><p>Leave a step empty to hide it.</p>
+        <div class="grid2">
+          <label class="field"><span>Land preparation</span><textarea name="s_prep"></textarea></label>
+          <label class="field"><span>Sowing & planting</span><textarea name="s_sow"></textarea></label>
+          <label class="field"><span>Irrigation</span><textarea name="s_water"></textarea></label>
+          <label class="field"><span>Organic nutrition</span><textarea name="s_feed"></textarea></label>
+          <label class="field"><span>Weeding & care</span><textarea name="s_weed"></textarea></label>
+          <label class="field"><span>Harvest</span><textarea name="s_harvest"></textarea></label>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <h2>Pests & diseases</h2><p>Name, and the organic way to control it.</p>
+        <div class="rows" id="pestRows"></div>
+        <button class="btn btn-outline btn-small" type="button" id="addPest" style="margin-top:10px">+ Add pest or disease</button>
+      </section>
+
+      <section class="card form-card">
+        <h2>Tips, companions & organic inputs</h2>
+        <label class="field"><span>Farmer tips <small>(one per line)</small></span><textarea name="tips"></textarea></label>
+        <label class="field" style="margin-top:14px"><span>Intercrop & companions</span><input name="companion"></label>
+        <div class="field" style="margin-top:14px"><span>Organic inputs to suggest</span><div class="checks" id="compostChecks"></div></div>
+      </section>
+
+      <section class="card form-card">
+        <h2>Photo</h2><p>Upload a photo you took, or paste a link to an open-licence photo. Uploads are resized to 1280 px.</p>
+        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+          <img class="photo-prev" id="photoPrev" alt="" hidden>
+          <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:10px">
+            <label class="field"><span>Upload</span><input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp"></label>
+            <label class="field"><span>Or photo link (https)</span><input name="imgSrc" placeholder="https://…"></label>
+            <label class="field"><span>Photo credit</span><input name="imgCredit" placeholder="e.g. (c) Your name"></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <h2>Sources</h2><p>Where the figures come from: title and link.</p>
+        <div class="rows" id="srcRows"></div>
+        <button class="btn btn-outline btn-small" type="button" id="addSrc" style="margin-top:10px">+ Add source</button>
+      </section>
+
+      <section class="card form-card">
+        <details class="ta-block" id="taBlock">
+          <summary>Tamil text (optional) · தமிழ் உரை</summary>
+          <p class="muted" style="font-size:14px;margin-bottom:12px">Fill what you can. Empty fields show the English text in Tamil mode. Pest and tip lists are used only when they have the same number of lines as the English.</p>
+          <div class="grid2">
+            <label class="field"><span>Name</span><input name="t_name"></label>
+            <label class="field"><span>Duration</span><input name="t_days"></label>
+            <label class="field"><span>Soil</span><input name="t_soil"></label>
+            <label class="field"><span>Temperature</span><input name="t_temp"></label>
+            <label class="field"><span>Rainfall</span><input name="t_rain"></label>
+            <label class="field"><span>Spacing</span><input name="t_spacing"></label>
+            <label class="field"><span>Seed rate</span><input name="t_seed"></label>
+            <label class="field"><span>Yield</span><input name="t_yield"></label>
+          </div>
+          <label class="field" style="margin-top:14px"><span>Introduction</span><textarea name="t_intro"></textarea></label>
+          <div class="grid2" style="margin-top:14px">
+            <label class="field"><span>Land preparation</span><textarea name="t_s_prep"></textarea></label>
+            <label class="field"><span>Sowing & planting</span><textarea name="t_s_sow"></textarea></label>
+            <label class="field"><span>Irrigation</span><textarea name="t_s_water"></textarea></label>
+            <label class="field"><span>Organic nutrition</span><textarea name="t_s_feed"></textarea></label>
+            <label class="field"><span>Weeding & care</span><textarea name="t_s_weed"></textarea></label>
+            <label class="field"><span>Harvest</span><textarea name="t_s_harvest"></textarea></label>
+          </div>
+          <label class="field" style="margin-top:14px"><span>Pests <small>(one per line: name | control)</small></span><textarea name="t_pests"></textarea></label>
+          <label class="field" style="margin-top:14px"><span>Tips <small>(one per line)</small></span><textarea name="t_tips"></textarea></label>
+          <label class="field" style="margin-top:14px"><span>Intercrop & companions</span><input name="t_companion"></label>
+        </details>
+      </section>
+
+      <div class="sticky-bar">
+        <button class="btn btn-primary" type="submit" id="saveBtn">Save plant</button>
+        <button class="btn btn-outline" type="button" id="cancelBtn">Cancel</button>
+        <span class="msg" id="formMsg"></span>
+      </div>
+    </form>
+  </main>
+
+  <script src="images.js"></script>
+  <script src="data-crops.js"></script>
+  <script src="data-crops-more-1.js"></script>
+  <script src="data-crops-more-2.js"></script>
+  <script src="data-crops-more-3.js"></script>
+  <script src="data-crops-more-4.js"></script>
+  <script src="images-local.js"></script>
+  <script src="data-compost.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
