@@ -161,10 +161,10 @@ function viewSources() {
     <h1 class="page-title">${L.repTitle}</h1>
     <p class="page-lede">${esc(R.method)}</p>
     <div class="facts" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
-      <div class="fact"><small>${L.claims}</small><b style="font-size:28px;font-family:var(--serif)">${n}</b></div>
-      <div class="fact"><small>${L.correctClose}</small><b style="font-size:28px;font-family:var(--serif);color:var(--green)">${pct(tot.correct + tot.approx)}%</b></div>
-      <div class="fact"><small>${L.exact}</small><b style="font-size:28px;font-family:var(--serif)">${pct(tot.correct)}%</b></div>
-      <div class="fact"><small>${L.wrongFixed}</small><b style="font-size:28px;font-family:var(--serif);color:var(--danger)">${tot.wrong}</b></div>
+      <div class="fact"><small>${L.claims}</small><b style="font-size:28px;font-weight:900;font-family:var(--serif)">${n}</b></div>
+      <div class="fact"><small>${L.correctClose}</small><b style="font-size:28px;font-weight:900;font-family:var(--serif);color:var(--green-text)">${pct(tot.correct + tot.approx)}%</b></div>
+      <div class="fact"><small>${L.exact}</small><b style="font-size:28px;font-weight:900;font-family:var(--serif)">${pct(tot.correct)}%</b></div>
+      <div class="fact"><small>${L.wrongFixed}</small><b style="font-size:28px;font-weight:900;font-family:var(--serif);color:var(--danger)">${tot.wrong}</b></div>
     </div>
     <div class="acc-bar">${bar.map(([k, , c]) => `<i style="flex:${tot[k]};background:${c}"></i>`).join('')}</div>
     <div class="legend">${bar.map(([k, l, c]) => `<span><i style="background:${c}"></i>${l}: ${tot[k]} (${pct(tot[k])}%)</span>`).join('')}</div>
@@ -416,7 +416,7 @@ function viewCrop(id) {
         <div class="ta">${esc(altName(c))}</div>
         <div class="sci">${esc(c.sci)}</div>
         <p class="intro">${esc(c.intro)}</p>
-        <div class="tags">${seasonTags(c)}<span class="tag">${icon('drop')}${L.water[c.water]}</span>${sowingNow ? `<span class="tag" style="background:var(--green-soft);color:var(--green)">${icon('check')}${L.sowThisMonth}</span>` : ''}${c.custom ? `<span class="tag">${icon('sprout')}${L.addedByAdmin}</span>` : ''}</div>
+        <div class="tags">${seasonTags(c)}<span class="tag">${icon('drop')}${L.water[c.water]}</span>${sowingNow ? `<span class="tag" style="background:var(--green-soft);color:var(--green-text)">${icon('check')}${L.sowThisMonth}</span>` : ''}${c.custom ? `<span class="tag">${icon('sprout')}${L.addedByAdmin}</span>` : ''}</div>
       </div>
     </div>
     ${c.custom ? `<p class="card season-about" style="margin-top:18px">${L.customNote}</p>` : ''}

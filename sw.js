@@ -1,6 +1,6 @@
 // App shell offline; crop photos and the last weather reply are cached as they are seen.
-const SHELL = 'ff-shell-v5', IMG = 'ff-img-v1';
-const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'data-crops.js', 'data-crops-more-1.js', 'data-crops-more-2.js', 'data-crops-more-3.js', 'data-crops-more-4.js', 'media.js', 'media-inputs.js', 'videos.js', 'media-more-1.js', 'media-more-2.js', 'videos-more.js', 'captions-ta.js', 'data-compost.js', 'images.js', 'images-local.js', 'sources.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js', 'i18n.js', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
+const SHELL = 'ff-shell-v6-kolam', IMG = 'ff-img-v1';
+const FILES = ['./', 'index.html', 'kolam/tokens.css', 'styles.css', 'app.js', 'data-crops.js', 'data-crops-more-1.js', 'data-crops-more-2.js', 'data-crops-more-3.js', 'data-crops-more-4.js', 'media.js', 'media-inputs.js', 'videos.js', 'media-more-1.js', 'media-more-2.js', 'videos-more.js', 'captions-ta.js', 'data-compost.js', 'images.js', 'images-local.js', 'sources.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js', 'i18n.js', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys()
   .then(keys => Promise.all(keys.filter(k => k !== SHELL && k !== IMG).map(k => caches.delete(k))))

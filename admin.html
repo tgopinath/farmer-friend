@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>FarmerFriend Admin</title>
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0077B6">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Sans+Tamil:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="kolam/tokens.css">
   <link rel="stylesheet" href="styles.css">
   <style>
     body { padding-bottom: 0; }
@@ -18,8 +20,8 @@
     .login { max-width: 400px; margin: 10vh auto; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
     .login h1 { font-size: 28px; }
     .field input, .field select, .field textarea { font: inherit; color: var(--ink); width: 100%; }
-    .field textarea { min-height: 84px; resize: vertical; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
-    .field select { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
+    .field textarea { min-height: 84px; resize: vertical; padding: 12px 14px; border-radius: var(--radius-md); border: 1.5px solid var(--line-strong); background: var(--surface); }
+    .field select { min-height: var(--size-control-md); padding: 12px 14px; border-radius: var(--radius-md); border: 1.5px solid var(--line-strong); background: var(--surface); }
     .field small { color: var(--muted); font-weight: 400; }
     .form-card { padding: 22px; margin-top: 16px; }
     .form-card h2 { font-size: 21px; margin-bottom: 4px; }
@@ -28,27 +30,28 @@
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     @media (max-width: 700px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
     .checks { display: flex; flex-wrap: wrap; gap: 8px; }
-    .checks label { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 14px; cursor: pointer; }
-    .checks input { accent-color: var(--green); }
-    .checks label:has(input:checked) { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 600; }
+    .checks label { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); font-size: 14px; cursor: pointer; }
+    .checks input { accent-color: var(--primary); }
+    .checks label:has(input:checked) { background: var(--green-soft); border-color: var(--green); color: var(--green-text); font-weight: 700; }
     .rows { display: flex; flex-direction: column; gap: 8px; }
     .row2 { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; }
-    .row2 input { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: inherit; color: var(--ink); min-width: 0; }
+    .row2 input { min-height: var(--size-control-md); padding: 10px 12px; border-radius: var(--radius-md); border: 1.5px solid var(--line-strong); background: var(--surface); font: inherit; color: var(--ink); min-width: 0; }
     @media (max-width: 600px) { .row2 { grid-template-columns: 1fr auto; } .row2 input:nth-child(2) { grid-column: 1; } }
-    .btn-small { padding: 7px 12px; font-size: 13px; border-radius: 10px; }
-    .btn-danger { background: var(--surface); color: var(--danger); border-color: var(--line); }
+    .btn-small { padding: 7px 14px; font-size: 14px; border-radius: var(--radius-md); }
+    .btn-danger { background: var(--surface); color: var(--danger); border-color: var(--line-strong); }
+    .btn-danger:hover { background: var(--danger-soft); }
     .list { display: flex; flex-direction: column; gap: 8px; }
     .list .mini { cursor: default; }
     .list .mini .acts { margin-left: auto; display: flex; gap: 6px; }
-    .photo-prev { width: 180px; aspect-ratio: 4 / 3; border-radius: 12px; object-fit: cover; background: var(--surface-2); }
+    .photo-prev { width: 180px; aspect-ratio: 4 / 3; border-radius: var(--radius-md); object-fit: cover; background: var(--surface-2); }
     .lookup-res { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-    .lookup-res button { display: flex; align-items: center; gap: 8px; text-align: left; padding: 6px 10px 6px 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 13px; }
-    .lookup-res img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+    .lookup-res button { display: flex; align-items: center; gap: 8px; text-align: left; padding: 6px 10px 6px 6px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); font-size: 13px; }
+    .lookup-res img { width: 40px; height: 40px; border-radius: var(--radius-sm); object-fit: cover; }
     .sticky-bar { position: sticky; bottom: 0; margin-top: 20px; padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .msg { font-size: 14px; font-weight: 500; }
+    .msg { font-size: 14px; font-weight: 700; }
     .msg.err { color: var(--danger); }
-    .msg.ok { color: var(--green); }
-    details.ta-block summary { cursor: pointer; font-weight: 600; }
+    .msg.ok { color: var(--green-text); }
+    details.ta-block summary { cursor: pointer; font-weight: 700; }
     details.ta-block[open] summary { margin-bottom: 12px; }
     .ta-block textarea, .ta-block input { font-family: var(--tamil); }
   </style>
@@ -61,7 +64,7 @@
 
   <!-- Login -->
   <form class="card login" id="loginForm" hidden>
-    <span class="brand-mark" style="width:44px;height:44px"><svg><use href="#i-sprout"/></svg></span>
+    <span class="brand-mark" style="width:48px;height:48px"><svg><use href="#i-sprout"/></svg></span>
     <h1>FarmerFriend admin</h1>
     <p class="muted">Sign in to add or edit plants. New plants appear in the app for everyone.</p>
     <label class="field"><span>Username</span><input id="user" autocomplete="username" required></label>
