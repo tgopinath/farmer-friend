@@ -1,7 +1,7 @@
 // FarmerFriend admin: sign in, then add, edit or delete plants stored by /api/plants.
 // Credentials stay in this tab's sessionStorage only and are sent as Basic auth over HTTPS.
 const $ = s => document.querySelector(s);
-const API = location.port === '5240' ? 'https://farmer-friend-kappa.vercel.app' : '';
+const API = location.port === '5240' ? 'https://farmerfriend.vercel.app' : '';
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const STEP_KEYS = ['prep', 'sow', 'water', 'feed', 'weed', 'harvest'];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

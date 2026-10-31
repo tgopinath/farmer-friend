@@ -582,7 +582,7 @@ function bindInput(id) {
 
 /* ---------- Plants added by the admin ---------- */
 // The live API sits on Vercel; copies of the app elsewhere (the portfolio) read it from there.
-const API = /vercel\.app$|localhost|127\.0\.0\.1/.test(location.hostname) && location.port !== '5240' ? '' : 'https://farmer-friend-kappa.vercel.app';
+const API = /vercel\.app$|localhost|127\.0\.0\.1/.test(location.hostname) && location.port !== '5240' ? '' : 'https://farmerfriend.vercel.app';
 const builtInIds = new Set(CROPS.map(c => c.id));
 function addCustomPlants(list) {
   if (!Array.isArray(list)) return false;

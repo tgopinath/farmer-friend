@@ -1,9 +1,9 @@
 # FarmerFriend · விவசாயி நண்பன்
 
-**Live app: https://farmer-friend-kappa.vercel.app**
+**Live app: https://farmerfriend.vercel.app**
 Open it on a phone and choose *Add to Home Screen* to install it. Switch between English and தமிழ் at the top.
 
-Admin (for adding plants): https://farmer-friend-kappa.vercel.app/admin.html
+Admin (for adding plants): https://farmerfriend.vercel.app/admin.html
 
 A farming guide for Indian farmers, in English and Tamil: what to plant each season (Kharif, Rabi, Zaid),
 step-by-step guides for 78 crops (grains, millets, vegetables, greens, fruits), and 10 organic compost and natural-input recipes with a field-size calculator.
