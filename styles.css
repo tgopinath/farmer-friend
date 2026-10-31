@@ -423,7 +423,8 @@ main { max-width: 1160px; margin: 0 auto; padding: 24px 20px 64px; outline: none
 .lang-ta .month-btn { font-size: 13px; }
 .lang-ta .cal-row.head { font-size: 11px; }
 /* Long Tamil words: let card titles and headings wrap instead of pushing the page wider */
-.crop-body h3, .crop-body .meta, .section-head h2, .mini b { overflow-wrap: anywhere; }
+.crop-body h3, .crop-body .meta, .section-head h2, .mini b, .mini small { overflow-wrap: anywhere; }
+.mini > div { min-width: 0; }
 .section-head { flex-wrap: wrap; }
 .crop-cal .bars { grid-template-columns: 56px repeat(12, minmax(0, 1fr)); }
 .crop-cal .bars .mn { overflow: hidden; white-space: nowrap; }
