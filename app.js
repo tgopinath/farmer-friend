@@ -134,7 +134,10 @@ const lbDlg = $('#lightbox');
 let lbAt = 0;
 function showLb() {
   const m = LB[lbAt]; if (!m) return;
-  $('#lbImg').src = m.src || m.thumb; $('#lbImg').alt = capOf(m);
+  // Show the small photo at once, then swap in the large one when it has loaded.
+  const img = $('#lbImg'), at = lbAt;
+  img.src = m.thumb || m.src; img.alt = capOf(m);
+  if (m.src && m.src !== m.thumb) { const big = new Image(); big.onload = () => { if (lbAt === at) img.src = m.src; }; big.src = m.src; }
   $('#lbCap').textContent = capOf(m); $('#lbCredit').textContent = m.credit || '';
   $('#lbCount').textContent = `${lbAt + 1} / ${LB.length}`;
 }
@@ -399,7 +402,9 @@ function viewCrop(id) {
   const F = L.facts;
   const facts = [[F.season, c.seasons.map(s => `${SEASONS[s].name} · ${SEASONS[s].months}`)], [F.days, c.days], [F.soil, c.soil], [F.ph, c.ph],
     [F.temp, c.temp], [F.water, `${L.water[c.water]} · ${L.rainWord(c.rain)}`], [F.spacing, c.spacing], [F.seed, c.seed]];
-  const row = (lab, arr, cls) => `<span class="lab">${lab}</span>${MONTHS.map((_, i) => `<i class="${arr.includes(i + 1) ? cls : ''}" title="${L.months[i]}"></i>`).join('')}`;
+  // Track cells for every month, with one continuous bar per run of months on top.
+  const row = (lab, arr, cls, r) => `<span class="lab" style="grid-row:${r}">${lab}</span>${MONTHS.map((_, i) => `<i style="grid-row:${r};grid-column:${i + 2}"></i>`).join('')}${
+    monthRuns(arr).map(([st, n]) => `<i class="${cls} seg" style="grid-row:${r};grid-column:${st + 1} / span ${n}" title="${esc(lab)}: ${esc(runLabel(lab, arr))}"></i>`).join('')}`;
   const sowingNow = c.sow.includes(m);
   return `<div class="fade-in">
     <a class="back" href="#/crops">${icon('back')}${L.allCrops}</a>
@@ -421,8 +426,8 @@ function viewCrop(id) {
     <section class="section">
       <div class="section-head"><div><h2>${L.calendar}</h2><p>${esc(L.expectedYield(c.yield))}</p></div></div>
       <div class="card crop-cal"><div class="bars">
-        <span></span>${L.monthsTiny.map((x, i) => `<span class="mn ${i + 1 === m ? 'cur' : ''}">${x}</span>`).join('')}
-        ${row(L.sowRow, c.sow, 's')}${c.harvest.length ? row(L.harvestRow, c.harvest, 'h') : ''}
+        <span style="grid-row:1"></span>${L.monthsTiny.map((x, i) => `<span class="mn ${i + 1 === m ? 'cur' : ''}" style="grid-row:1;grid-column:${i + 2}">${x}</span>`).join('')}
+        ${row(L.sowRow, c.sow, 's', 2)}${c.harvest.length ? row(L.harvestRow, c.harvest, 'h', 3) : ''}
       </div>${c.harvest.length ? '' : `<p class="note">${esc(L.harvestAfter(c.days))}</p>`}</div>
     </section>
 
