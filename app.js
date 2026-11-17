@@ -730,6 +730,7 @@ function route() {
     const up = { crop: '#/crops', plant: '#/crops', organic: b ? '#/compost' : null, sources: '#/' }[a];
     if (up) m3.setBack(up);
   }
+  iosRoute(a, b, tab);
   after && after();
   if (!(a === 'seasons' && b === 'month')) window.scrollTo(0, 0);
 }
@@ -873,6 +874,37 @@ function m3Relabel() {
   m3.setActions(m3Actions());
 }
 m3Relabel();
+
+/* ---------- iOS app mode (Apple HIG, from the shared Kolam iOS kit) ----------
+   Only inside the iOS app (FarmerFriend-iOS shell) or with ?app=ios; KolamIOS.init returns null in a browser. */
+const svgUse = id => `<svg class="ios-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-${id}"/></svg>`;
+const IOS_TABS = () => [
+  { id: 'home', label: L.tabs.home, icon: 'sun.max', href: '#/' },
+  { id: 'seasons', label: L.tabs.seasons, icon: 'calendar', href: '#/seasons' },
+  { id: 'crops', label: L.tabs.crops, icon: 'leaf', href: '#/crops' },
+  { id: 'compost', label: L.tabs.compost, icon: svgUse('recycle'), href: '#/compost' },
+];
+const iosActions = () => [
+  { id: 'iosLang', text: LANG === 'ta' ? 'EN' : 'த', label: L.langLabel, onClick: () => $('#langBtn').click() },
+  { id: 'iosPlace', icon: svgUse('pin'), label: L.placeTitle, onClick: () => $('#placeBtn').click() },
+];
+const ios = window.KolamIOS ? KolamIOS.init({
+  appName: 'FarmerFriend', uaTokens: ['FarmerFriend-iOS'],
+  tint: { light: '#0070AC', dark: '#5AB8F0' },
+  tabs: IOS_TABS(), currentTab: 'home', content: '#app',
+}) : null;
+if (ios) document.documentElement.classList.remove('k-android', 'k-app');
+function iosRoute(a, b, tab) {
+  if (!ios) return;
+  document.querySelectorAll('.ios-tab span').forEach((s, i) => { s.textContent = IOS_TABS()[i].label; s.lang = LANG; });
+  if (tab) KolamIOS.tabBar.select(tab);
+  const up = { crop: ['#/crops', L.tabs.crops], plant: ['#/crops', L.tabs.crops], organic: b ? ['#/compost', L.tabs.compost] : null, sources: ['#/', L.tabs.home] }[a];
+  const title = document.title.replace(/ · FarmerFriend$/, '');
+  if (up) KolamIOS.navBar.set({ title, back: { label: up[1], onClick: () => history.length > 1 ? history.back() : (location.hash = up[0]) }, actions: iosActions(), keepTitle: true });
+  else KolamIOS.navBar.set({ title: tab ? L.tabs[tab] : title, large: true, actions: iosActions(), keepTitle: true });
+  document.querySelector('.ios-navbar-title').lang = LANG; document.querySelector('.ios-largetitle').lang = LANG;
+  KolamIOS.enhance(app);
+}
 
 route();
 loadCustomPlants();

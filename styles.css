@@ -608,3 +608,39 @@ html.k-android dialog.sheet { border-radius: var(--md-sys-shape-corner-extra-lar
 html.k-android dialog.sheet h2 { font: var(--md-sys-typescale-headline-small); }
 html.k-android .field input { height: 56px; border-radius: var(--md-sys-shape-corner-extra-small); border: 1px solid var(--md-sys-color-outline); background: transparent; }
 html.k-android .tag { border-radius: var(--md-sys-shape-corner-small); }
+
+/* ---------- iOS app mode (Apple HIG) ----------
+   kolam-ios.css (loaded after this file) builds the navigation bar, tab bar and sheets and maps the Kolam
+   tokens onto iOS system colours. Here FarmerFriend's own components get iOS shapes. Only html.k-ios
+   (inside the iOS app) is touched; the website keeps its Kolam look. */
+html.k-ios .topbar, html.k-ios .back { display: none; } /* nav bar + tab bar + edge swipe replace them */
+html.k-ios main { padding: 0 16px 32px; }
+html.k-ios .page-title { font: 700 28px/1.214 var(--ios-font-display); letter-spacing: .013em; margin: 4px 0 8px; }
+html.k-ios body.lang-ta .page-title { font-family: "Noto Sans Tamil", var(--ios-font); font-size: 24px; line-height: 1.45; }
+html.k-ios .eyebrow:not(.season-card .eyebrow) { font: 400 13px/1.385 var(--ios-font); letter-spacing: 0; text-transform: none; color: var(--ios-label2); }
+html.k-ios .section-head h2 { font: 700 22px/1.273 var(--ios-font-display); letter-spacing: -.012em; }
+html.k-ios .card { border: 0; box-shadow: none; border-radius: var(--ios-radius-card); background: var(--ios-grouped2); }
+html.k-ios .btn { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; font: 600 17px/22px var(--ios-font); letter-spacing: -.024em; }
+html.k-ios .btn-primary { background: var(--ios-tint-fill); color: var(--ios-on-tint); }
+html.k-ios .btn-outline { background: color-mix(in srgb, var(--ios-tint-fill) 15%, transparent); color: var(--ios-tint); }
+html.k-ios .btn:active, html.k-ios .chip:active { opacity: .6; }
+html.k-ios .icon-btn { border: 0; background: var(--ios-fill3); color: var(--ios-label); }
+/* Filter chips become gray capsules; the selected one is tinted (HIG has no chips) */
+html.k-ios .chip { min-height: 34px; padding: 0 14px; border: 0; background: var(--ios-fill3); color: var(--ios-label); font: 500 15px/34px var(--ios-font); letter-spacing: -.015em; }
+html.k-ios .chip.on { background: var(--ios-tint-fill); color: var(--ios-on-tint); }
+html.k-ios .tag { border-radius: 999px; font-family: var(--ios-font); font-weight: 600; }
+/* Segmented control */
+html.k-ios .seg { background: var(--ios-fill3); border: 0; border-radius: 999px; padding: 2px; gap: 0; }
+html.k-ios .seg button { min-height: 32px; border-radius: 999px; font: 500 13px/1.2 var(--ios-font); color: var(--ios-label); }
+html.k-ios .seg button.on { background: var(--ios-elevated, #fff); color: var(--ios-label); box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 1px 1px rgba(0,0,0,.04); font-weight: 600; }
+/* Search field: filled, rounded, no border */
+html.k-ios .search { margin: 8px 0 14px; }
+html.k-ios .search svg { left: 12px; width: 18px; height: 18px; color: var(--ios-label2); }
+html.k-ios .search input { min-height: 44px; padding: 0 14px 0 38px; border: 0; border-radius: 999px; background: var(--ios-fill3); color: var(--ios-label); font: 400 17px/1.294 var(--ios-font); }
+html.k-ios .search input::placeholder { color: var(--ios-placeholder); }
+/* The location picker as an iOS sheet */
+html.k-ios dialog.sheet { margin: auto 0 0; width: 100%; max-width: 100%; border-radius: var(--ios-radius-sheet) var(--ios-radius-sheet) 0 0; background: var(--ios-grouped); padding-bottom: env(safe-area-inset-bottom); }
+html.k-ios dialog.sheet::backdrop { background: var(--ios-scrim); }
+html.k-ios .sheet-head h2 { font: 600 17px/22px var(--ios-font); }
+html.k-ios .field { font: 400 13px/1.385 var(--ios-font); color: var(--ios-label2); text-transform: uppercase; }
+html.k-ios .field input { min-height: 44px; border: 0; border-radius: 12px; background: var(--ios-grouped2); text-transform: none; font: 400 17px/1.294 var(--ios-font); }
