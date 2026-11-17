@@ -578,3 +578,33 @@ main { width: 100%; margin: 0; padding: 24px var(--gutter) 64px; outline: none; 
 .crop-cal .bars i.s.seg { background: var(--green); }
 .crop-cal .bars i.h.seg { background: var(--sun); }
 .lightbox img { min-width: min(320px, 80vw); background: color-mix(in srgb, var(--on-sidebar) 4%, transparent); }
+
+/* ---------- Android app mode (Material Design 3) ----------
+   kolam-m3.css (loaded after this file) builds the app bar, navigation bar and snackbar and maps the
+   Kolam tokens onto the M3 colour roles. Here FarmerFriend's own components get M3 shapes. Only
+   html.k-android (inside the Android app) is touched; the website keeps its Kolam look. */
+html.k-android .back { display: none; } /* the app bar's back arrow and the phone's Back replace it */
+html.k-android main { padding: 8px 16px 32px; }
+html.k-android .page-title { font: var(--md-sys-typescale-headline-medium); margin: 8px 0; }
+html.k-android .section-head h2 { font: var(--md-sys-typescale-title-large); }
+html.k-android .card { border: 0; border-radius: var(--md-sys-shape-corner-medium); background: var(--md-sys-color-surface-container-low); box-shadow: var(--md-sys-elevation-level1); }
+html.k-android .btn { min-height: 40px; padding: 0 24px; border-radius: var(--md-sys-shape-corner-full); font: var(--md-sys-typescale-label-large); }
+html.k-android .btn-primary { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+html.k-android .btn-outline { background: transparent; color: var(--md-sys-color-primary); border-color: var(--md-sys-color-outline); }
+html.k-android .icon-btn { border: 0; background: transparent; color: var(--md-sys-color-on-surface-variant); }
+/* Filter chips: 32dp, 8dp corners, secondary container + check mark when selected */
+html.k-android .chip { height: 32px; padding: 0 16px; display: inline-flex; align-items: center; border: 0; border-radius: var(--md-sys-shape-corner-small); background: transparent; box-shadow: inset 0 0 0 1px var(--md-sys-color-outline); color: var(--md-sys-color-on-surface-variant); font: var(--md-sys-typescale-label-large); }
+html.k-android .chip.on { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); box-shadow: none; padding-left: 8px; }
+html.k-android .chip.on::before { content: ''; width: 18px; height: 18px; margin-right: 8px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.55 17.6 4.4 12.45l1.4-1.4 3.75 3.75 8.65-8.65 1.4 1.4z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.55 17.6 4.4 12.45l1.4-1.4 3.75 3.75 8.65-8.65 1.4 1.4z'/%3E%3C/svg%3E") center/contain no-repeat; }
+/* Segmented buttons (calendar sort) */
+html.k-android .seg { display: inline-flex; border-radius: var(--md-sys-shape-corner-full); box-shadow: inset 0 0 0 1px var(--md-sys-color-outline); background: transparent; padding: 0; gap: 0; overflow: hidden; }
+html.k-android .seg button { height: 40px; padding: 0 12px; border: 0; border-radius: 0; background: transparent; color: var(--md-sys-color-on-surface); font: var(--md-sys-typescale-label-large); box-shadow: none; }
+html.k-android .seg button + button { border-left: 1px solid var(--md-sys-color-outline); }
+html.k-android .seg button.on { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+/* The location picker as an M3 dialog */
+html.k-android dialog.sheet { border-radius: var(--md-sys-shape-corner-extra-large); background: var(--md-sys-color-surface-container-high); border: 0; }
+html.k-android dialog.sheet h2 { font: var(--md-sys-typescale-headline-small); }
+html.k-android .field input { height: 56px; border-radius: var(--md-sys-shape-corner-extra-small); border: 1px solid var(--md-sys-color-outline); background: transparent; }
+html.k-android .tag { border-radius: var(--md-sys-shape-corner-small); }

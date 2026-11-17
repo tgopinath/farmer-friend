@@ -724,6 +724,12 @@ function route() {
   document.querySelectorAll('.tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === tab));
   const t = tab && tab !== 'home' ? `${L.titles[tab]} · FarmerFriend` : 'FarmerFriend';
   document.title = a === 'crop' && cropById(b) ? `${cropById(b).name} · FarmerFriend` : a === 'organic' && inputById(b) ? `${inputById(b).name} · FarmerFriend` : t || 'FarmerFriend';
+  if (m3.enabled) {
+    m3.setTitle(document.title.replace(/ · FarmerFriend$/, ''));
+    if (tab) m3.setActive(tab);
+    const up = { crop: '#/crops', plant: '#/crops', organic: b ? '#/compost' : null, sources: '#/' }[a];
+    if (up) m3.setBack(up);
+  }
   after && after();
   if (!(a === 'seasons' && b === 'month')) window.scrollTo(0, 0);
 }
@@ -813,7 +819,7 @@ function setPlace(p) { store.set('place', p); $('#placeName').textContent = p.mi
 applyLang();
 $('#placeName').textContent = place().mine ? L.myFarm : place().name;
 $('#langBtn').addEventListener('click', () => {
-  LANG = LANG === 'ta' ? 'en' : 'ta'; store.set('lang', LANG); applyLang();
+  LANG = LANG === 'ta' ? 'en' : 'ta'; store.set('lang', LANG); applyLang(); m3Relabel?.();
   $('#placeName').textContent = place().mine ? L.myFarm : place().name;
   const y = window.scrollY; route(); window.scrollTo(0, y);
 });
@@ -839,6 +845,34 @@ $('#placeInput').addEventListener('input', e => {
     } catch { $('#placeResults').innerHTML = `<li class="empty">${L.needNet}</li>`; }
   }, 300);
 });
+
+/* ---------- Android app mode (Material Design 3, from the shared Kolam M3 kit) ----------
+   Only inside the Android app (or ?app=android); in a browser KolamM3.init returns a stub. */
+const M3_DEST = { home: 'tabs.home', seasons: 'tabs.seasons', crops: 'tabs.crops', compost: 'tabs.compost' };
+const m3Actions = () => [
+  { id: 'm3Place', icon: 'location_on', label: L.placeTitle, onClick: () => $('#placeBtn').click() },
+  { id: 'm3Lang', text: LANG === 'ta' ? 'EN' : 'த', lang: LANG === 'ta' ? 'en' : 'ta', label: L.langLabel, onClick: () => $('#langBtn').click() },
+];
+const m3 = window.KolamM3 ? KolamM3.init({
+  primary: '#0077b6', title: 'FarmerFriend',
+  destinations: [
+    { id: 'home', label: L.tabs?.home || 'Today', icon: 'wb_sunny', href: '#/' },
+    { id: 'seasons', label: 'Seasons', icon: 'calendar_month', href: '#/seasons' },
+    { id: 'crops', label: 'Crops', icon: 'eco', href: '#/crops' },
+    { id: 'compost', label: 'Organic', icon: 'compost', href: '#/compost' },
+  ],
+  actions: m3Actions(),
+  hide: ['.topbar'],
+}) : { enabled: false };
+function m3Relabel() {
+  if (!m3.enabled) return;
+  document.querySelectorAll('.md-nav-item').forEach(el => {
+    const src = document.querySelector(`.tabs a[data-tab="${el.dataset.dest}"] span`);
+    const l = el.querySelector('.md-nav-label'); if (src) l.textContent = src.textContent; l.lang = LANG;
+  });
+  m3.setActions(m3Actions());
+}
+m3Relabel();
 
 route();
 loadCustomPlants();
