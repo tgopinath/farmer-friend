@@ -16,3 +16,5 @@ Plain HTML/CSS/JS, no build step. Run locally with `python3 -m http.server` and 
 
 - `data-crops.js`, `data-compost.js`: English data · `data-ta-*.js`: Tamil translations · `i18n.js`: interface text
 - `sources.js`: references and accuracy report · `tools/check-ta.mjs`: checks Tamil data matches the English
+
+How it is built (system, data flow, shells, deploy): [ARCHITECTURE.md](ARCHITECTURE.md)
