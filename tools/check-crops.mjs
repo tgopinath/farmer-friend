@@ -1,7 +1,7 @@
 // Validates every crop (including data-crops-more-*.js batches): fields, month numbers, ids, photo and sources.
 // Run: node tools/check-crops.mjs [id-substring]
 import { readFileSync, readdirSync } from 'node:fs';
-const root = new URL('..', import.meta.url).pathname;
+const root = decodeURIComponent(new URL('..', import.meta.url).pathname);
 const more = readdirSync(root).filter(f => /^data-crops-more-\d+\.js$/.test(f)).sort();
 const files = ['images.js', 'data-crops.js', ...more, 'data-compost.js', 'sources.js'];
 const src = files.map(f => readFileSync(root + f, 'utf8')).join('\n').replace(/^const (\w+) =/gm, 'globalThis.$1 =');

@@ -181,59 +181,7 @@ function viewSources() {
 }
 
 /* ---------- Today ---------- */
-function viewHome() {
-  const m = nowMonth(), s = seasonFor(m), S = SEASONS[s];
-  const sowNow = CROPS.filter(c => c.sow.includes(m));
-  const harvestNow = CROPS.filter(c => c.harvest.includes(m));
-  const nextM = m % 12 + 1, sowNext = CROPS.filter(c => c.sow.includes(nextM) && !c.sow.includes(m));
-  const heading = L.seasonHeading[s];
-  const strip = MONTHS.map((_, i) => `<span class="${i + 1 === m ? 'now' : SEASON_MONTHS[s].includes(i + 1) ? 'in' : ''}"></span>`).join('');
-  const featured = ['jeevamrutham', 'vermicompost', 'neemastra'].map(inputById);
-  return `
-    <form class="search home-search" id="homeSearch" role="search">${icon('search')}<input id="hq" type="search" placeholder="${esc(L.homeSearchPh)}" autocomplete="off" aria-label="${esc(L.homeSearchPh)}"></form>
-    <div class="hero fade-in">
-      <section class="season-card ${s}">
-        <span class="season-art">${icon(s === 'kharif' ? 'rain' : s === 'rabi' ? 'leaf' : 'sun')}</span>
-        <span class="eyebrow">${new Date().toLocaleDateString(L.locale, { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-        <h1>${heading}</h1>
-        <p>${LANG === 'ta' ? '' : `<span class="ta">${S.ta} · </span>`}${S.months}. ${S.about}</p>
-        <div class="month-strip">${strip}</div>
-        <div class="month-labels">${L.monthsTiny.map(x => `<span>${x}</span>`).join('')}</div>
-        <div class="actions">
-          <a class="btn btn-light" href="#/seasons/${s}">${icon('calendar')}${L.seasonPlanner}</a>
-          <a class="btn btn-ghost" href="#/crops">${icon('leaf')}${L.allCrops}</a>
-        </div>
-      </section>
-      <section class="card weather" id="weather" aria-live="polite">
-        <div class="skeleton" style="height:56px"></div>
-        <div class="skeleton" style="height:76px"></div>
-        <div class="skeleton" style="height:60px"></div>
-      </section>
-    </div>
-
-    <section class="section">
-      <div class="section-head"><div><h2>${L.sowIn(monthName(m))}</h2><p>${L.cropsThisMonth(sowNow.length)}</p></div>
-        <a class="link" href="#/seasons/month/${m}">${L.monthPlanner}${icon('next')}</a></div>
-      <div class="rail">${sowNow.map(cropCard).join('')}</div>
-    </section>
-
-    ${harvestNow.length ? `<section class="section">
-      <div class="section-head"><div><h2>${L.readyHarvest}</h2><p>${L.harvestedIn(monthName(m))}</p></div></div>
-      <div class="mini-list">${harvestNow.map(miniRow).join('')}</div>
-    </section>` : ''}
-
-    ${sowNext.length ? `<section class="section">
-      <div class="section-head"><div><h2>${L.getReady(monthName(nextM))}</h2><p>${L.getReadySub}</p></div></div>
-      <div class="mini-list">${sowNext.map(miniRow).join('')}</div>
-    </section>` : ''}
-
-    <section class="section">
-      <div class="section-head"><div><h2>${L.makeOnFarm}</h2><p>${L.makeOnFarmSub}</p></div>
-        <a class="link" href="#/organic">${L.seeAll(COMPOSTS.length)}${icon('next')}</a></div>
-      <div class="org-grid">${featured.map(orgCard).join('')}</div>
-    </section>
-    ${disclaimerHtml()}`;
-}
+// The combined Today screen is in views-today.js.
 const miniRow = c => `<a class="card mini" href="#/crop/${c.id}">${photo(c.id)}<div><b>${esc(c.name)}</b><small>${esc(altName(c))} · ${esc(c.days)}</small></div>${icon('next')}</a>`;
 
 /* ---------- Weather ---------- */
@@ -244,20 +192,6 @@ const WX = [
 const wx = code => { const r = WX.find(([c]) => c.includes(code)) || WX[1]; return { label: L.wx[r[1]], icon: r[2] }; };
 const place = () => store.get('place', { name: 'Chennai', admin: 'Tamil Nadu', lat: 13.0827, lon: 80.2707 });
 
-async function loadWeather() {
-  const el = $('#weather'); if (!el) return;
-  const p = place();
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto&forecast_days=5`;
-  try {
-    const cacheKey = 'wx.' + p.lat + ',' + p.lon, cached = store.get(cacheKey);
-    const d = cached && Date.now() - cached.t < 30 * 60e3 ? cached.d : await fetch(url).then(r => { if (!r.ok) throw 0; return r.json(); });
-    if (!cached || cached.d !== d) store.set(cacheKey, { t: Date.now(), d });
-    if (!$('#weather')) return;
-    renderWeather(el, d, p);
-  } catch {
-    el.innerHTML = `<div class="weather-top"><span class="weather-icon">${icon('cloud')}</span><div><b>${L.wxFail}</b><p class="muted" style="font-size:14px">${L.wxFailSub}</p></div></div>`;
-  }
-}
 function farmAdvice(d) {
   const c = d.current, dl = d.daily, tips = [];
   const rain2 = Math.max(dl.precipitation_probability_max[0] ?? 0, dl.precipitation_probability_max[1] ?? 0);
@@ -292,6 +226,7 @@ function renderWeather(el, d, p) {
 }
 
 /* ---------- Seasons ---------- */
+const cropsNav = on => subnav([['crops', '#/crops', L.cropsNav.crops], ['seasons', '#/seasons', L.cropsNav.seasons], ['compost', '#/organic', L.cropsNav.compost]], on, L.titles.crops);
 function viewSeasons(sel, month) {
   const m = nowMonth(), cur = seasonFor(m);
   const s = sel && SEASONS[sel] ? sel : cur;
@@ -305,6 +240,7 @@ function viewSeasons(sel, month) {
       <span class="eyebrow">${L.plannerEyebrow}</span>
       <h1 class="page-title">${L.plannerTitle}</h1>
       <p class="page-lede">${L.plannerLede}</p>
+      ${cropsNav('seasons')}
       <div class="season-tabs" role="tablist">
         ${Object.entries(SEASONS).map(([k, v]) => `<a role="tab" aria-selected="${k === s}" class="season-tab ${k} ${k === s ? 'on' : ''}" href="#/seasons/${k}">
           ${k === cur ? `<span class="now-pill">${L.now}</span>` : ''}<b>${v.name}</b><small>${v.months}<br>${v.short}</small></a>`).join('')}
@@ -359,6 +295,7 @@ function viewCrops() {
     <span class="eyebrow">${L.libEyebrow}</span>
     <h1 class="page-title">${L.libTitle(CROPS.length)}</h1>
     <p class="page-lede">${L.libLede}</p>
+    ${cropsNav('crops')}
     <label class="search">${icon('search')}<input id="q" type="search" placeholder="${esc(L.searchPh)}" value="${esc(st.q)}" autocomplete="off" aria-label="${esc(L.searchPh)}"></label>
     <div class="chips scroll" id="catChips">${[['all', L.all], ...Object.entries(CATEGORIES)].map(([k, v]) => `<button class="chip ${k === st.cat ? 'on' : ''}" data-cat="${k}">${v}</button>`).join('')}</div>
     <div class="chips scroll" id="seasonChips" style="margin-top:8px">${[['all', L.anySeason], ...Object.entries(SEASONS).map(([k, v]) => [k, v.name])].map(([k, v]) => `<button class="chip ${k === st.season ? 'on' : ''}" data-season="${k}">${v}</button>`).join('')}</div>
@@ -465,6 +402,7 @@ function viewOrganic() {
     <span class="eyebrow">${L.orgEyebrow}</span>
     <h1 class="page-title">${L.orgTitle}</h1>
     <p class="page-lede">${L.orgLede}</p>
+    ${cropsNav('compost')}
     <div class="chips scroll" id="typeChips" style="margin-top:20px;margin-bottom:16px">${[['all', L.all], ...Object.entries(INPUT_TYPES).map(([k, v]) => [k, v.name])].map(([k, v]) => `<button class="chip ${k === t ? 'on' : ''}" data-type="${k}">${v}</button>`).join('')}</div>
     <div class="org-grid" id="orgGrid"></div>
     <section class="section">
@@ -710,29 +648,87 @@ function route() {
   const [a, b, c] = parts;
   let html, after, tab;
   LB = [];
-  if (!a) { html = viewHome(); after = () => { loadWeather(); bindHomeSearch(); }; tab = 'home'; }
-  else if (a === 'seasons') { html = b === 'month' ? viewSeasons(null, +c) : viewSeasons(b); tab = 'seasons'; after = () => bindSeasons(b === 'month'); }
+  clearInterval(typeof pumpTick !== 'undefined' ? pumpTick : 0);
+  if (!a) { html = viewToday(); after = bindToday; tab = 'home'; }
+  else if (a === 'seasons') { html = b === 'month' ? viewSeasons(null, +c) : viewSeasons(b); tab = 'crops'; after = () => bindSeasons(b === 'month'); }
   else if (a === 'crops') { html = viewCrops(); after = bindCrops; tab = 'crops'; }
   else if (a === 'crop') { html = viewCrop(b); tab = 'crops'; }
   else if (a === 'plant') { html = viewPlant(b); tab = 'crops'; after = () => loadPlant(b); }
-  else if (a === 'organic' && b) { html = viewInput(b); after = () => bindInput(b); tab = 'compost'; }
+  else if (a === 'organic' && b) { html = viewInput(b); after = () => bindInput(b); tab = 'crops'; }
   else if (a === 'sources') { html = viewSources(); }
-  else if (a === 'organic' || a === 'compost') { html = viewOrganic(); after = bindOrganic; tab = 'compost'; }
+  else if (a === 'organic' || a === 'compost') { html = viewOrganic(); after = bindOrganic; tab = 'crops'; }
+  else if (a === 'water') {
+    tab = 'water';
+    if (b === 'fields') html = viewWaterFields();
+    else if (b === 'field') { html = viewWaterField(c); after = () => bindWaterField(c); }
+    else if (b === 'rain') { html = viewWaterRain(); after = bindWaterRain; }
+    else if (b === 'use') html = viewWaterUse();
+    else { html = viewWater(); after = bindWater; }
+  }
+  else if (a === 'drying') {
+    tab = 'drying';
+    if (b === 'materials') { html = viewDryMaterials(); after = bindDryMaterials; }
+    else if (b === 'm') { html = viewDryMaterial(c); after = () => bindDryMaterial(c); }
+    else if (b === 'plan') { html = viewDryPlan(c); after = bindDryPlan; }
+    else if (b === 'guide') html = viewDryGuide();
+    else { html = viewDrying(); after = bindDrying; }
+  }
+  else if (a === 'farm') {
+    tab = 'farm';
+    if (b === 'animals') { html = viewFarmAnimals(c); after = () => bindFarmAnimals(c); }
+    else if (b === 'animal') html = viewFarmAnimal(c);
+    else if (b === 'money') html = viewFarmMoney();
+    else if (b === 'stock') html = viewFarmStock();
+    else if (b === 'health') { html = viewFarmHealth(c); after = bindFarmHealth; }
+    else html = viewFarm();
+  }
+  else if (a === 'settings') { html = viewSettings(); }
   else html = notFound();
   app.innerHTML = html;
   bindMedia();
   document.querySelectorAll('.tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === tab));
-  const t = tab && tab !== 'home' ? `${L.titles[tab]} · FarmerFriend` : 'FarmerFriend';
-  document.title = a === 'crop' && cropById(b) ? `${cropById(b).name} · FarmerFriend` : a === 'organic' && inputById(b) ? `${inputById(b).name} · FarmerFriend` : t || 'FarmerFriend';
+  document.querySelector('.settings-btn')?.classList.toggle('on', a === 'settings');
+  document.title = pageTitle(a, b, c, tab);
   if (m3.enabled) {
     m3.setTitle(document.title.replace(/ · FarmerFriend$/, ''));
-    if (tab) m3.setActive(tab);
-    const up = { crop: '#/crops', plant: '#/crops', organic: b ? '#/compost' : null, sources: '#/' }[a];
-    if (up) m3.setBack(up);
+    const up = upOf(a, b, c);
+    // The kit resets its overrides on every route change, so set ours just after it.
+    setTimeout(() => { if (tab) m3.setActive(tab); if (up) m3.setBack(up[0]); }, 0);
   }
-  iosRoute(a, b, tab);
+  iosRoute(a, b, c, tab);
   after && after();
   if (!(a === 'seasons' && b === 'month')) window.scrollTo(0, 0);
+}
+// Where Back goes from a detail page, and the label of that parent.
+function upOf(a, b, c) {
+  const T = L.tabs;
+  if (a === 'crop' || a === 'plant') return ['#/crops', T.crops];
+  if (a === 'organic' && b) return ['#/organic', L.cropsNav.compost];
+  if (a === 'seasons' || a === 'organic' || a === 'compost') return ['#/crops', T.crops];
+  if (a === 'sources' || a === 'settings') return ['#/', T.home];
+  if (a === 'water' && b === 'field') return ['#/water', T.water];
+  if (a === 'water' && b) return ['#/water', T.water];
+  if (a === 'drying' && b === 'm') return ['#/drying/materials', L.d.nav.materials];
+  if (a === 'drying' && b) return ['#/drying', T.drying];
+  if (a === 'farm' && b === 'animal') return ['#/farm/animals', L.f.nav.animals];
+  if (a === 'farm' && b === 'animals' && c) return ['#/farm/animals', L.f.nav.animals];
+  if (a === 'farm' && b) return ['#/farm', T.farm];
+  return null;
+}
+function pageTitle(a, b, c, tab) {
+  const app = ' · FarmerFriend';
+  if (a === 'crop' && cropById(b)) return cropById(b).name + app;
+  if (a === 'organic' && inputById(b)) return inputById(b).name + app;
+  if (a === 'water' && b === 'field' && farm.find('fields', c)) return dn(farm.find('fields', c).name) + app;
+  if (a === 'drying' && b === 'm' && DRY_BY_ID[c]) return mat(DRY_BY_ID[c]).name + app;
+  if (a === 'farm' && b === 'animal' && farm.find('animals', c)) return animalName(farm.find('animals', c)) + app;
+  const sub = { water: L.w.nav, drying: L.d.nav, farm: L.f.nav }[a];
+  if (sub && b) { const k = { fields: 'fields', rain: 'rain', use: 'use', materials: 'materials', plan: 'plan', guide: 'guide', animals: 'animals', money: 'money', stock: 'stock', health: 'health' }[b]; if (k && sub[k]) return sub[k] + app; }
+  if (a === 'seasons') return L.titles.seasons + app;
+  if (a === 'organic' || a === 'compost') return L.titles.compost + app;
+  if (a === 'settings') return L.titles.settings + app;
+  if (a === 'sources') return L.repTitle + app;
+  return tab && tab !== 'home' ? L.titles[tab] + app : 'FarmerFriend';
 }
 function bindHomeSearch() {
   $('#homeSearch').addEventListener('submit', e => {
@@ -816,7 +812,7 @@ window.addEventListener('hashchange', route);
 
 /* ---------- Location ---------- */
 const dlg = $('#placeDialog');
-function setPlace(p) { store.set('place', p); $('#placeName').textContent = p.mine ? L.myFarm : p.name; dlg.close(); if (!location.hash || location.hash === '#/') route(); }
+function setPlace(p) { store.set('place', p); $('#placeName').textContent = p.mine ? L.myFarm : p.name; dlg.close(); rerender(); }
 applyLang();
 $('#placeName').textContent = place().mine ? L.myFarm : place().name;
 $('#langBtn').addEventListener('click', () => {
@@ -849,27 +845,24 @@ $('#placeInput').addEventListener('input', e => {
 
 /* ---------- Android app mode (Material Design 3, from the shared Kolam M3 kit) ----------
    Only inside the Android app (or ?app=android); in a browser KolamM3.init returns a stub. */
-const M3_DEST = { home: 'tabs.home', seasons: 'tabs.seasons', crops: 'tabs.crops', compost: 'tabs.compost' };
+const TAB_IDS = ['home', 'crops', 'water', 'drying', 'farm'];
+const TAB_HREF = { home: '#/', crops: '#/crops', water: '#/water', drying: '#/drying', farm: '#/farm' };
 const m3Actions = () => [
   { id: 'm3Place', icon: 'location_on', label: L.placeTitle, onClick: () => $('#placeBtn').click() },
   { id: 'm3Lang', text: LANG === 'ta' ? 'EN' : 'த', lang: LANG === 'ta' ? 'en' : 'ta', label: L.langLabel, onClick: () => $('#langBtn').click() },
+  { id: 'm3Settings', icon: 'settings', label: L.titles.settings, href: '#/settings' },
 ];
+const M3_ICON = { home: 'wb_sunny', crops: 'eco', water: 'water_drop', drying: 'solar_power', farm: 'agriculture' };
 const m3 = window.KolamM3 ? KolamM3.init({
   primary: '#0077b6', title: 'FarmerFriend',
-  destinations: [
-    { id: 'home', label: L.tabs?.home || 'Today', icon: 'wb_sunny', href: '#/' },
-    { id: 'seasons', label: 'Seasons', icon: 'calendar_month', href: '#/seasons' },
-    { id: 'crops', label: 'Crops', icon: 'eco', href: '#/crops' },
-    { id: 'compost', label: 'Organic', icon: 'compost', href: '#/compost' },
-  ],
+  destinations: TAB_IDS.map(id => ({ id, label: L.tabs[id], icon: M3_ICON[id], href: TAB_HREF[id] })),
   actions: m3Actions(),
   hide: ['.topbar'],
 }) : { enabled: false };
 function m3Relabel() {
   if (!m3.enabled) return;
   document.querySelectorAll('.md-nav-item').forEach(el => {
-    const src = document.querySelector(`.tabs a[data-tab="${el.dataset.dest}"] span`);
-    const l = el.querySelector('.md-nav-label'); if (src) l.textContent = src.textContent; l.lang = LANG;
+    const l = el.querySelector('.md-nav-label'); if (l && L.tabs[el.dataset.dest]) { l.textContent = L.tabs[el.dataset.dest]; l.lang = LANG; }
   });
   m3.setActions(m3Actions());
 }
@@ -878,15 +871,12 @@ m3Relabel();
 /* ---------- iOS app mode (Apple HIG, from the shared Kolam iOS kit) ----------
    Only inside the iOS app (FarmerFriend-iOS shell) or with ?app=ios; KolamIOS.init returns null in a browser. */
 const svgUse = id => `<svg class="ios-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-${id}"/></svg>`;
-const IOS_TABS = () => [
-  { id: 'home', label: L.tabs.home, icon: 'sun.max', href: '#/' },
-  { id: 'seasons', label: L.tabs.seasons, icon: 'calendar', href: '#/seasons' },
-  { id: 'crops', label: L.tabs.crops, icon: 'leaf', href: '#/crops' },
-  { id: 'compost', label: L.tabs.compost, icon: svgUse('recycle'), href: '#/compost' },
-];
+const IOS_ICON = { home: 'sun.max', crops: 'leaf', water: svgUse('drop'), drying: svgUse('dryhouse'), farm: svgUse('barn') };
+const IOS_TABS = () => TAB_IDS.map(id => ({ id, label: L.tabs[id], icon: IOS_ICON[id], href: TAB_HREF[id] }));
 const iosActions = () => [
   { id: 'iosLang', text: LANG === 'ta' ? 'EN' : 'த', label: L.langLabel, onClick: () => $('#langBtn').click() },
   { id: 'iosPlace', icon: svgUse('pin'), label: L.placeTitle, onClick: () => $('#placeBtn').click() },
+  { id: 'iosSettings', icon: 'gearshape', label: L.titles.settings, onClick: () => { location.hash = '#/settings'; } },
 ];
 const ios = window.KolamIOS ? KolamIOS.init({
   appName: 'FarmerFriend', uaTokens: ['FarmerFriend-iOS'],
@@ -894,18 +884,15 @@ const ios = window.KolamIOS ? KolamIOS.init({
   tabs: IOS_TABS(), currentTab: 'home', content: '#app',
 }) : null;
 if (ios) document.documentElement.classList.remove('k-android', 'k-app');
-function iosRoute(a, b, tab) {
+function iosRoute(a, b, c, tab) {
   if (!ios) return;
   document.querySelectorAll('.ios-tab span').forEach((s, i) => { s.textContent = IOS_TABS()[i].label; s.lang = LANG; });
   if (tab) KolamIOS.tabBar.select(tab);
-  const up = { crop: ['#/crops', L.tabs.crops], plant: ['#/crops', L.tabs.crops], organic: b ? ['#/compost', L.tabs.compost] : null, sources: ['#/', L.tabs.home] }[a];
-  const title = document.title.replace(/ · FarmerFriend$/, '');
+  const up = upOf(a, b, c), title = document.title.replace(/ · FarmerFriend$/, '');
   if (up) KolamIOS.navBar.set({ title, back: { label: up[1], onClick: () => history.length > 1 ? history.back() : (location.hash = up[0]) }, actions: iosActions(), keepTitle: true });
   else KolamIOS.navBar.set({ title: tab ? L.tabs[tab] : title, large: true, actions: iosActions(), keepTitle: true });
   document.querySelector('.ios-navbar-title').lang = LANG; document.querySelector('.ios-largetitle').lang = LANG;
   KolamIOS.enhance(app);
 }
 
-route();
-loadCustomPlants();
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js');
+// Boot (first route, admin plants, service worker) is in boot.js, after every section has loaded.

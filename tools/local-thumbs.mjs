@@ -3,7 +3,7 @@
 // Credits stay in CROP_IMAGES. Run: node tools/local-thumbs.mjs  (skips files already saved)
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-const root = new URL('..', import.meta.url).pathname;
+const root = decodeURIComponent(new URL('..', import.meta.url).pathname);
 const more = readdirSync(root).filter(f => /^data-crops-more-\d+\.js$/.test(f)).sort();
 globalThis.window = globalThis;
 new Function(['images.js', 'data-crops.js', ...more, 'media-inputs.js'].map(f => readFileSync(root + f, 'utf8')).join('\n').replace(/^const (\w+) =/gm, 'globalThis.$1 ='))();

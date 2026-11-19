@@ -1,6 +1,6 @@
-// App shell offline; crop photos and the last weather reply are cached as they are seen.
-const SHELL = 'ff-shell-v12-ios', IMG = 'ff-img-v1';
-const FILES = ['./', 'index.html', 'kolam/tokens.css', 'styles.css', 'app.js', 'data-crops.js', 'data-crops-more-1.js', 'data-crops-more-2.js', 'data-crops-more-3.js', 'data-crops-more-4.js', 'media.js', 'media-inputs.js', 'videos.js', 'media-more-1.js', 'media-more-2.js', 'videos-more.js', 'captions-ta.js', 'data-compost.js', 'images.js', 'images-local.js', 'sources.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js', 'i18n.js', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
+// App shell offline; crop and drying photos are cached as they are seen. The API (/api/) is never cached.
+const SHELL = 'ff-shell-v13-combined', IMG = 'ff-img-v2';
+const FILES = ['./', 'index.html', 'kolam/tokens.css', 'styles.css', 'app.js', 'data-crops.js', 'data-crops-more-1.js', 'data-crops-more-2.js', 'data-crops-more-3.js', 'data-crops-more-4.js', 'media.js', 'media-inputs.js', 'videos.js', 'media-more-1.js', 'media-more-2.js', 'videos-more.js', 'captions-ta.js', 'data-compost.js', 'images.js', 'images-local.js', 'sources.js', 'data-ta-crops-1.js', 'data-ta-crops-2.js', 'data-ta-compost.js', 'i18n.js', 'i18n-more.js', 'sections.css', 'geo-bridge.js', 'ui.js', 'boot.js', 'views-water.js', 'views-dry.js', 'views-farm.js', 'views-today.js', 'data-water.js', 'data-ta-water.js', 'data-dry.js', 'data-ta-dry.js', 'lib/wx.js', 'lib/water.js', 'lib/dry.js', 'lib/farmbooks.js', 'lib/attention.js', 'lib/farmstore.js', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys()
   .then(keys => Promise.all(keys.filter(k => k !== SHELL && k !== IMG).map(k => caches.delete(k))))
@@ -8,6 +8,7 @@ self.addEventListener('activate', e => e.waitUntil(caches.keys()
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const u = new URL(e.request.url);
+  if (u.pathname.startsWith('/api/')) return;
   if (u.pathname.includes('/img/')) {
     e.respondWith(caches.open(IMG).then(async c => (await c.match(e.request)) || fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; })));
   } else if (u.origin === location.origin || /fonts\.(googleapis|gstatic)\.com/.test(u.host) || (u.host === 'tgopinath.github.io' && /^\/kolam-design-system\/(m3|ios)\//.test(u.pathname))) {

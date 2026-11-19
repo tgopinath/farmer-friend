@@ -1,7 +1,7 @@
 {
   "name": "FarmerFriend",
   "short_name": "FarmerFriend",
-  "description": "What to plant this season, how to grow every crop, and how to make organic compost at home.",
+  "description": "One farm app in English and Tamil: crops and seasons, organic inputs, irrigation, solar drying, and livestock and farm books.",
   "start_url": "./#/",
   "scope": "./",
   "display": "standalone",

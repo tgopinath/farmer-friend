@@ -3,3 +3,5 @@ README.md
 prototype
 .env*
 node_modules
+tests
+.smoke

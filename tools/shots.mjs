@@ -1,5 +1,5 @@
 // Captures the phone screenshots used on the portfolio card: node tools/shots.mjs
-// Saves 600-wide JPEGs to prototype/shots (same size as the other portfolio phone shots).
+// Saves 600-wide JPEGs to prototype/shots (same size as the other portfolio phone shots) and a 1440 x 900 prototype/web.jpg.
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
@@ -38,9 +38,19 @@ try {
     execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '84', '--resampleWidth', '600', png, '--out', path.join(SHOTS, file + '.jpg')], { stdio: 'pipe' });
   };
   await grab('#/', 'home', { wait: 7000 });
+  await grab('#/water', 'water-ta', { lang: 'ta', wait: 7000 });
+  await grab('#/farm', 'farm', { wait: 4000 });
+  await grab('#/drying/m/turmeric', 'drying', { wait: 6000 });
   await grab('#/crop/rice', 'crop-ta', { lang: 'ta', wait: 6000 });
   await grab('#/organic/jeevamrutham', 'organic', { wait: 5000, js: "const i=document.querySelector('#areaIn'); i.value='2'; i.dispatchEvent(new Event('input')); scrollTo(0, document.querySelector('#calc').offsetTop - 120)" });
   await grab('#/seasons', 'seasons-ta', { lang: 'ta', wait: 5000 });
+  // The 1440 x 900 desktop shot for the portfolio card's browser window.
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+  await send('Page.navigate', { url: `${origin}/index.html` }); await sleep(1200);
+  await send('Runtime.evaluate', { expression: `localStorage.clear(); localStorage.setItem('ff.lang', '"en"')` });
+  await send('Page.navigate', { url: `${origin}/index.html?shot=web#/` }); await sleep(7000);
+  const ws2 = await send('Page.captureScreenshot', { format: 'jpeg', quality: 82 });
+  fs.writeFileSync(path.join(ROOT, 'prototype', 'web.jpg'), Buffer.from(ws2.result.data, 'base64'));
   console.log('captured', fs.readdirSync(SHOTS).join(', '));
   ws.close();
 } finally {
