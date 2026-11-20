@@ -376,6 +376,10 @@ html.k-android body.lang-ta .md-nav-label { font-size: 11.5px; letter-spacing: 0
 .wcards > *, .cols > *, .kpis > *, .glance > *, .settings > *, .calc-grid > * { min-width: 0; }
 .wcard-body .amount, .wcard-body .detail { overflow-wrap: anywhere; }
 .org-layout > *, .mini-stack > * { min-width: 0; }
-@media (max-width: 420px) { .rows.bare > li { flex-wrap: wrap; } .rows.bare > li > .btn { margin-left: 46px; } }
+@media (max-width: 420px) {
+  .rows.bare > li { flex-wrap: wrap; }
+  .rows.bare > li:has(> .btn) > .grow { flex: 1 1 calc(100% - 58px); }
+  .rows.bare > li:has(> .btn) > .tile ~ .grow + * { margin-left: 46px; }
+}
 .panel-head, .section-head { flex-wrap: wrap; }
 .panel-head > div, .section-head > div { min-width: 0; flex: 1 1 200px; }
